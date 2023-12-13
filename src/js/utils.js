@@ -24,31 +24,24 @@
  * */
 export function calcTileType(index, boardSize) {
   // TODO: ваш код будет тут
-  console.log(index);
-  console.log(boardSize);
   const map = new Map([
     [0 , 'top-left'],
     [boardSize - 1 , 'top-right'],
     [boardSize * boardSize - boardSize, 'bottom-left'],
     [boardSize * boardSize - 1, 'bottom-right']    
   ])
-  console.log(map);
+
   if (map.has(index)) {
-    console.log('angle');
     return map.get(index);
   } else if (index < boardSize -1) {
-    console.log('top');
     return 'top';
   } else if (index % boardSize === 0) {
-    console.log('left');
     return 'left';
   } else if (index > boardSize * boardSize - boardSize && index < boardSize * boardSize - 1) {
-    console.log('bottom');
     return 'bottom';
   } else if ((index + 1) % boardSize === 0) {
     return 'right';
   } else {
-    console.log('center');
     return 'center';
   }
 }
