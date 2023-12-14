@@ -22,7 +22,6 @@ export default class Character {
     // TODO: выбросите исключение, если кто-то использует "new Character()"
     
     if (new.target.name === 'Character') {
-      console.log(new.target.name);
       throw 'Dont use new Character()';
     }
   }
