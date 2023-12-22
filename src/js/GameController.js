@@ -19,31 +19,16 @@ export default class GameController {
     let indexesList = [];
 
     this.playerTeam.characters.forEach(element => {
-      let playerPositions = Position.playerPosition(8);
-      let index = this.generateRandom(playerPositions);
-      if (!indexesList.includes(playerPositions[index])) {
-        indexesList.push(playerPositions[index]);
-        this.characters.push(new PositionedCharacter(element, playerPositions[index]));
-      } else {
-        index = this.generateRandom(playerPositions);
-        indexesList.push(playerPositions[index]);
-        this.characters.push(new PositionedCharacter(element, playerPositions[index]));
-      }
+      this.renderTeam(Position.playerPosition(8), element, indexesList);
     });
+
+    
 
     this.rivalTeam.characters.forEach(element => {
-      let rivalPositions = Position.rivalPosition(8);
-      let index = this.generateRandom(rivalPositions);
-
-      if (!indexesList.includes(rivalPositions[index])) {
-        indexesList.push(rivalPositions[index]);
-        this.characters.push(new PositionedCharacter(element, rivalPositions[index]));
-      } else {
-        index = this.generateRandom(rivalPositions);
-        indexesList.push(rivalPositions[index]);
-        this.characters.push(new PositionedCharacter(element, rivalPositions[index]));
-      }
+      this.renderTeam(Position.rivalPosition(8), element, indexesList);
     });
+
+    
 
     localStorage.setItem('Positions', indexesList);
 
@@ -53,13 +38,19 @@ export default class GameController {
       if (this.onCellEnter(index)) {
         this.characters.forEach((e) => {
           if (e.position === index) {
-            // console.log(e.character);
             let tip = this.generateTip(e.character.level,e.character.attack,e.character.defence,e.character.health);
             this.gamePlay.showCellTooltip(tip , index);
           }
         })
       }
-    });
+    })
+
+
+    this.gamePlay.addCellLeaveListener((index) => {
+     if (this.onCellLeave(index)) {
+      this.gamePlay.hideCellTooltip(index);
+     }
+    })
   }
 
   onCellClick(index) {
@@ -76,6 +67,10 @@ export default class GameController {
 
   onCellLeave(index) {
     // TODO: react to mouse leave
+    if (localStorage.getItem('Positions').includes(index)) {
+      return true;
+    }
+    return false;
   }
 
   generatePlayerTeam() {
@@ -94,6 +89,18 @@ export default class GameController {
 
   generateTip(level, attack, defence, health) {
     return `🎖${level} ⚔${attack} 🛡${defence} ❤${health}`
+  }
+
+  renderTeam(positions, element, indexesList) {
+      let index = this.generateRandom(positions);
+      if (!indexesList.includes(positions[index])) {
+        indexesList.push(positions[index]);
+        this.characters.push(new PositionedCharacter(element, positions[index]));
+      } else {
+        index = this.generateRandom(positions);
+        indexesList.push(positions[index]);
+        this.characters.push(new PositionedCharacter(element, positions[index]));
+      }
   }
 }
 
