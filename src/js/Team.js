@@ -16,4 +16,27 @@ export default class Team {
   constructor(characters) {
     this.characters = characters;
   }
+
+  // generatePlayerTeam() {
+  //   const playerTypes = ['Bowman', 'Swordsman', 'Magician'];
+  //   return generateTeam(playerTypes, 3, 2);
+  // }
+
+  // generateRivalTeam() {
+  //   const rivalTypes = ['Vampire', 'Undead', 'Daemon'];
+  //   return generateTeam(rivalTypes, 3, 2);
+  // }
+
+  // renderTeamNew(positions, element, indexesList) {
+  //   let index = Basic.generateRandom(positions);
+  //   if (!indexesList.includes(positions[index])) {
+  //     indexesList.push(positions[index]);
+  //     this.characters.push(new PositionedCharacter(element, positions[index]));
+  //   } else {
+  //     index = Basic.generateRandom(positions);
+  //     indexesList.push(positions[index]);
+  //     this.characters.push(new PositionedCharacter(element, positions[index]));
+  //   }
+// }
+
 }
