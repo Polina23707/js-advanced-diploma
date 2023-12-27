@@ -1,7 +1,6 @@
 import GameRule from "../GameRule";
 import PositionedCharacter from "../PositionedCharacter";
 import Bowman from "../characters/Bowman";
-import Daemon from "../characters/Daemon";
 
 test('check movement radius', () => {
   let bowman = new Bowman(1);

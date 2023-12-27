@@ -40,7 +40,7 @@ export default class GameController {
     
     localStorage.setItem('nextPlayer', 0);
     
-    if (!!localStorage.activePlayer) {
+    if (localStorage.activePlayer) {
       delete localStorage.activePlayer;
     }
 
@@ -72,7 +72,7 @@ export default class GameController {
         let gamerCharacters = ['bowman', 'swordsman', 'magician'];
         let characters = this.characters;
 
-        if (!!localStorage.activePlayer) {
+        if (localStorage.activePlayer) {
     
           let activePlayer = GameRule.getCharacterByIndex(Number(localStorage.activePlayer), characters);
     
@@ -82,7 +82,7 @@ export default class GameController {
             if (gamerCharacters.includes(character.character.type)) {
               this.setActivePlayer(index);
             } else {
-              if (!!GameRule.attackRadius(activePlayer, this.gamePlay.boardSize).includes(index)) {
+              if (GameRule.attackRadius(activePlayer, this.gamePlay.boardSize).includes(index)) {
                 let target = GameRule.getCharacterByIndex(index, characters);
                 this.makeDamage(activePlayer,target);
                 this.setNextPlayer();
@@ -126,11 +126,11 @@ export default class GameController {
 
   showOptions(index) {
     if (localStorage.nextPlayer === '0') {
-      if (!!localStorage.activePlayer) {
+      if (localStorage.activePlayer) {
         let activePlayer = GameRule.getCharacterByIndex(Number(localStorage.activePlayer), this.characters);
 
-        if (!!activePlayer) {
-          if (!!this.characters.map((char) => char.position).includes(index)) {
+        if (activePlayer) {
+          if (this.characters.map((char) => char.position).includes(index)) {
             let rivals = GameRule.getRivalCharacters(this.characters);
             if (rivals.map((char) => char.position).includes(index)) {
               if (GameRule.attackRadius(activePlayer, this.gamePlay.boardSize).includes(index)) {
@@ -194,7 +194,7 @@ export default class GameController {
   }
 
   setActivePlayer(index) {
-    if (!!localStorage.activePlayer) {
+    if (localStorage.activePlayer) {
       this.gamePlay.deselectCell(localStorage.activePlayer);
     } 
     this.gamePlay.selectCell(index);
@@ -204,7 +204,7 @@ export default class GameController {
   setNextPlayer() {
     if (this.status === 1) {
       this.healthListener();
-      if (!!localStorage.nextPlayer) {
+      if (localStorage.nextPlayer) {
         if (localStorage.nextPlayer === '0') {
           localStorage.setItem('nextPlayer' , 1);
           setTimeout(() => this.runRivalTurn(), 500);
@@ -225,7 +225,7 @@ export default class GameController {
     let activeRival = GameRule.getCharacterByIndex(Number(localStorage.activeRival), this.characters);
     let rivalAttack = GameRule.checkRivalAttack(activeRival, GameRule.getPlayerCharacters(this.characters), this.gamePlay.boardSize);
     let target = GameRule.getCharacterByIndex(rivalAttack[0], this.characters);
-    if (!!rivalAttack.length) {
+    if (rivalAttack.length) {
       if (rivalAttack.length !== 1) {
         target = this.characters.filter((char) => rivalAttack.includes(char.position));
         target = target.sort((a, b) => a.character.health - b.character.health)[0];
@@ -282,7 +282,7 @@ export default class GameController {
       }
     }
 
-    if (!!died.length) {
+    if (died.length) {
       if (this.characters[died[0]].position === Number(localStorage.activePlayer)) {
         this.gamePlay.setCursor('default');
         localStorage.removeItem('activePlayer')
@@ -294,10 +294,10 @@ export default class GameController {
       this.characters.splice(died[0], 1);     
       this.gamePlay.redrawPositions(this.characters);
 
-      if (!!!GameRule.getPlayerCharacters(this.characters).length) {
+      if (!GameRule.getPlayerCharacters(this.characters).length) {
         this.gameOver();
         return;
-      } else if (!!!GameRule.getRivalCharacters(this.characters).length) {
+      } else if (!GameRule.getRivalCharacters(this.characters).length) {
         this.levelUp();
       }
     }
@@ -325,7 +325,7 @@ export default class GameController {
   }
 
   onLoadGameClick() {
-    if (!!localStorage.state) {
+    if (localStorage.state) {
       this.characters.forEach((char) => {
         this.gamePlay.deselectCell(char.position);
       })

@@ -1,7 +1,6 @@
 // Проверьте, в нужном ли количестве и диапазоне уровней (учёт аргумента maxLevel) создаются персонажи при вызове generateTeam
 
 import { generateTeam } from "../generators";
-import { characterGenerator } from "../generators";
 
 test('generate team', () => {
   let types = ['Bowman', 'Magician'];
