@@ -21,7 +21,7 @@ export default class GameController {
     this.status = 1;
     let indexesList = [];
 
-    this.gamePlay.addNewGameListener(() => this.onNewGameClick);
+    this.gamePlay.addNewGameListener(() => this.onNewGameClick());
     this.gamePlay.addSaveGameListener(() => this.onSaveGameClick());
     this.gamePlay.addLoadGameListener(() => this.onLoadGameClick());
 
@@ -320,6 +320,7 @@ export default class GameController {
     this.characters = [];
     this.init();
   }
+
   onSaveGameClick() {
     GameState.from(this);
   }
