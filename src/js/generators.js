@@ -29,6 +29,11 @@ export function* characterGenerator(allowedTypes, maxLevel) {
   
     let randTypeIndex = Math.floor(Math.random() * allowedTypes.length);
     let character = characterList.get(allowedTypes[randTypeIndex]);
+
+    if (character.level > 1) {
+      character.levelUp();
+    }
+
     yield character;
   }
 
