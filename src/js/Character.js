@@ -25,4 +25,19 @@ export default class Character {
       throw 'Dont use new Character()';
     }
   }
+
+  levelUp() {
+    if (this.level > 1) {
+      for (let i = 1; i < this.level; i++) {
+        this.attack = Math.max(this.attack, this.attack * (80 + this.health) / 100);
+        this.defence = Math.max(this.defence, this.defence * (80 + this.health) / 100);
+      }
+    }
+  }
+
+
+ 
+  
+
+
 }
