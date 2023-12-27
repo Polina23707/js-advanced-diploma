@@ -1,11 +1,8 @@
 import themes from "./themes";
 import PositionedCharacter from "./PositionedCharacter";
-import { generateTeam } from "./generators";
 import Basic from "./Basic";
 import GamePlay from "./GamePlay";
-import Rival from "./GameRule";
 import GameRule from "./GameRule";
-import Team from "./Team";
 import GameState from "./GameState";
 import GameStateService from "./GameStateService";
 
@@ -24,20 +21,9 @@ export default class GameController {
     this.status = 1;
     let indexesList = [];
 
-    this.gamePlay.addNewGameListener(() => {
-      console.log('New game');
-      this.onNewGameClick();
-    })
-
-    this.gamePlay.addSaveGameListener(() => {
-      console.log('Save game');
-      this.onSaveGameClick();
-    })
-
-    this.gamePlay.addLoadGameListener(() => {
-      console.log('Save game');
-      this.onLoadGameClick();
-    })
+    this.gamePlay.addNewGameListener(() => this.onNewGameClick);
+    this.gamePlay.addSaveGameListener(() => this.onSaveGameClick());
+    this.gamePlay.addLoadGameListener(() => this.onLoadGameClick());
 
     if (this.level === 1) {
       this.gamePlay.drawUi(themes.prairie);
@@ -76,9 +62,7 @@ export default class GameController {
       }
     })
 
-    this.gamePlay.addCellClickListener((index) => {
-      this.onCellClick(index);
-    })
+    this.gamePlay.addCellClickListener((index) => this.onCellClick(index));
   }
 
   onCellClick(index) {
@@ -128,7 +112,6 @@ export default class GameController {
     }
   }
 
-
   onCellEnter(index) {
     // TODO: react to mouse enter
     let characterPositions = this.characters.map((char) => char.position);
@@ -140,7 +123,6 @@ export default class GameController {
     return false;
     }   
   } 
-
 
   showOptions(index) {
     if (localStorage.nextPlayer === '0') {
@@ -225,7 +207,7 @@ export default class GameController {
       if (!!localStorage.nextPlayer) {
         if (localStorage.nextPlayer === '0') {
           localStorage.setItem('nextPlayer' , 1);
-          this.runRivalTurn();
+          setTimeout(() => this.runRivalTurn(), 500);
         } else {
           localStorage.setItem('nextPlayer' , 0);
         }
@@ -250,7 +232,7 @@ export default class GameController {
       }
       this.makeDamage(activeRival,target);
     } else {
-      activeRival.position = GameRule.checkRivalMoves(activeRival, this.gamePlay.boardSize);
+      activeRival.position = GameRule.checkRivalMoves(activeRival, this.gamePlay.boardSize, this.characters);
       this.gamePlay.redrawPositions(this.characters)
     }
   }
@@ -258,10 +240,8 @@ export default class GameController {
   makeDamage(attacker, target) {
     let characters = this.characters;
     let damage = GameRule.calculateDamage(attacker, target);
-    this.gamePlay.showDamage(target.position, damage);
-    this.gamePlay.redrawPositions(characters);
-    // this.gamePlay.showDamage(target.position, damage)
-    //   .then(() => this.gamePlay.redrawPositions(characters));
+    this.gamePlay.showDamage(target.position, damage)
+      .then(() => this.gamePlay.redrawPositions(characters));
     this.healthListener();
   }
 
@@ -286,7 +266,6 @@ export default class GameController {
     playerCharacters.forEach((char) =>{
       char.character.level += 1;
       char.character.levelUp();
-
       char.character.health += 80;
       if (char.character.health > 100) {
         char.character.health = 100;
@@ -305,12 +284,13 @@ export default class GameController {
 
     if (!!died.length) {
       if (this.characters[died[0]].position === Number(localStorage.activePlayer)) {
+        this.gamePlay.setCursor('default');
         localStorage.removeItem('activePlayer')
         
       } else if (this.characters[died[0]].position === Number(localStorage.activeRival)) {
         localStorage.removeItem('activeRival')
       }
-
+      this.gamePlay.deselectCell(this.characters[died[0]].position);
       this.characters.splice(died[0], 1);     
       this.gamePlay.redrawPositions(this.characters);
 
@@ -324,7 +304,11 @@ export default class GameController {
   }
 
   gameOver() {
+    this.gamePlay.setCursor('default');
     this.status = 0;
+    this.characters.forEach((char) => {
+      this.gamePlay.deselectCell(char.position);
+    })
     this.gamePlay.addNewGameListener(() => {
       this.level = 1;
       this.init();
@@ -337,17 +321,23 @@ export default class GameController {
     this.init();
   }
   onSaveGameClick() {
-    console.log('Сохранить игру');
     GameState.from(this);
   }
 
   onLoadGameClick() {
-    console.log('Загрузить игру');
-    let gameStateService = new GameStateService(localStorage);
-    let gameState = gameStateService.load();
-    console.log(gameState);
+    if (!!localStorage.state) {
+      this.characters.forEach((char) => {
+        this.gamePlay.deselectCell(char.position);
+      })
+      this.gamePlay.setCursor('default');
+      let gameStateService = new GameStateService(localStorage);
+      let gameState = gameStateService.load();
+      this.characters = gameState.characters;
+      this.level = gameState.level;
+      this.status = gameState.status;
+      this.gamePlay.redrawPositions(this.characters);
+    }
   }
-
 }
 
 
