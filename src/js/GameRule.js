@@ -67,11 +67,14 @@ export default class GameRule {
     return attacks;
   }
 
-  static checkRivalMoves(character, boardSize) {
+  static checkRivalMoves(character, boardSize, characters) {
     let availableCells = GameRule.movementRadius(character, boardSize);
+    let characterCells = characters.map((char) => char.position);
     let availableLocations = []
     availableCells.forEach((cell) => {
-      availableLocations.push(Basic.getLocation(cell, Basic.createBoard(boardSize)));
+      if (!characterCells.includes(cell)) {
+        availableLocations.push(Basic.getLocation(cell, Basic.createBoard(boardSize)));
+      }
     })
 
     let playerLocation = Basic.getLocation(Number(localStorage.activePlayer), Basic.createBoard(boardSize));
